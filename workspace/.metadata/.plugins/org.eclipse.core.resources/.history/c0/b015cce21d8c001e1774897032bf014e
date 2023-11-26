@@ -1,0 +1,113 @@
+#include "system.h"
+#include "altera_up_avalon_audio.h"
+#include "sys/alt_stdio.h"
+#include "altera_avalon_pio_regs.h"
+
+/* globals */
+#define BUF_SIZE 500000 // about 10 seconds of buffer (@ 48K samples/sec)
+#define BUF_THRESHOLD 96 // 75% of 128-word buffer
+#define RECORD_PLAY_DURATION 5 // Record and play duration in seconds
+
+/* function prototypes */
+void record_and_play(alt_up_audio_dev *);
+
+/*******************************************************************************
+ * This program demonstrates the use of HAL functions
+ *
+ * It performs the following:
+ * 1. Records audio for about 5 seconds and then plays the recorded audio for 5 seconds.
+ *    LEDG[0] is lit while recording, LEDR[1] is lit while playing.
+ ******************************************************************************/
+unsigned int l_buf[BUF_SIZE];
+unsigned int r_buf[BUF_SIZE];
+int num_read;
+int num_written;
+
+int main(void)
+{
+    /* The base addresses of devices are listed in the "BSP/system.h" file*/
+
+    /* declare variables to point to devices that are opened */
+    alt_up_audio_dev *audio_dev;
+
+    audio_dev = alt_up_audio_open_dev("/dev/Audio_Subsystem_Audio");
+    if (audio_dev == NULL)
+    {
+        alt_printf("Error: could not open audio device\n");
+        return -1;
+    }
+    else
+        alt_printf("Opened audio device\n");
+
+    /* used for audio record/playback */
+
+
+    record_and_play(audio_dev);
+
+    return 0;
+}
+
+/*******************************************************************************
+ * Subroutine to perform audio recording and playback for a specified duration
+ ******************************************************************************/
+void record_and_play(alt_up_audio_dev *audio_dev)
+{
+    int buffer_index = 0;
+    int seconds_recorded = 0;
+    int seconds_played = 0;
+
+    while (1)
+    {
+        if (seconds_recorded < RECORD_PLAY_DURATION)
+        {
+            IOWR_ALTERA_AVALON_PIO_DATA(GREEN_LEDS_BASE, 0x1); // set LEDG[0] on
+
+            // record data until the buffer is full
+            if (buffer_index < BUF_SIZE)
+            {
+                num_read = alt_up_audio_record_r(audio_dev, &(r_buf[buffer_index]),
+                                                 BUF_SIZE - buffer_index);
+                // assume we can read the same # words from the left and right
+                (void)alt_up_audio_record_l(audio_dev, &(l_buf[buffer_index]),
+                                            num_read);
+                buffer_index += num_read;
+
+                if (buffer_index == BUF_SIZE)
+                {
+                    // done recording for this iteration
+                    buffer_index = 0;
+                    seconds_recorded++;
+                    IOWR_ALTERA_AVALON_PIO_DATA(GREEN_LEDS_BASE, 0x0); // set LEDG off
+                }
+            }
+        }
+        else if (seconds_played < RECORD_PLAY_DURATION)
+        {
+            IOWR_ALTERA_AVALON_PIO_DATA(RED_LEDS_BASE, 0x2); // set LEDR[1] on
+
+            // output data until the buffer is empty
+            if (buffer_index < BUF_SIZE)
+            {
+                num_written = alt_up_audio_play_r(audio_dev, &(r_buf[buffer_index]),
+                                                  BUF_SIZE - buffer_index);
+                // assume that we can write the same # words to the left and right
+                (void)alt_up_audio_play_l(audio_dev, &(l_buf[buffer_index]),
+                                           num_written);
+                buffer_index += num_written;
+
+                if (buffer_index == BUF_SIZE)
+                {
+                    // done playback for this iteration
+                    buffer_index = 0;
+                    seconds_played++;
+                    IOWR_ALTERA_AVALON_PIO_DATA(RED_LEDS_BASE, 0x0); // set LEDR off
+                }
+            }
+        }
+        else
+        {
+            // Both recording and playing have been done for the specified duration
+            break;
+        }
+    }
+}

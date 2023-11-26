@@ -1,0 +1,124 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include "Altera_UP_SD_Card_Avalon_Interface.h"
+#include "altera_up_avalon_audio_and_video_config.h"
+#include "altera_up_avalon_audio.h"
+
+#define MAX_SUBDIRECTORIES 20
+
+#define BUF_SIZE 500000 // Adjust the buffer size as needed
+#define FIFO_SIZE 112    // Adjust the FIFO size as needed
+
+void playMusic(char *audioFile);
+
+int main(void)
+{
+    alt_up_sd_card_dev *sd_card;
+    sd_card = alt_up_sd_card_open_dev("/dev/SD_Card");
+
+    if (sd_card != NULL)
+    {
+        if (alt_up_sd_card_is_Present())
+        {
+            printf("An SD Card was found!\n");
+        }
+        else
+        {
+            printf("No SD Card Found. \n Exiting the program.");
+            return -1;
+        }
+
+        if (alt_up_sd_card_is_FAT16())
+        {
+            printf("FAT-16 partition found!\n");
+        }
+        else
+        {
+            printf("No FAT-16 partition found - Exiting!\n");
+            return -1;
+        }
+
+        printf("The SD Card contains the following files:\n");
+
+        // Call find_files on the root directory
+        // find_files(".");
+
+        // Play a specific WAV file (change the filename as needed)
+        playMusic("sample.wav");
+    }
+
+    return 0;
+}
+
+void playMusic(char *audioFile)
+{
+    alt_up_sd_card_dev *device_reference = NULL;
+    device_reference = alt_up_sd_card_open_dev("/dev/SD_Card");
+
+    // Check if SD Card interface is ready
+    if (device_reference != NULL)
+        printf("SD card reader is opened\n");
+    else
+    {
+        printf("SD card reader is null\n");
+        return;
+    }
+
+    // Check if there is an SD Card
+    if (alt_up_sd_card_is_Present())
+        printf("SD Card is present.\n");
+    else
+    {
+        printf("SD Card is not present.\n");
+        return;
+    }
+
+    // Check if SD card is FAT16 format
+    if (!alt_up_sd_card_is_FAT16())
+    {
+        printf("Not FAT16\n");
+        return;
+    }
+
+    alt_up_av_config_dev *av_config = alt_up_av_config_open_dev("/dev/audio_and_video_config");
+
+    if (av_config != NULL)
+        printf("AV is opened\n");
+    else
+    {
+        printf("AV is null\n");
+        return;
+    }
+
+    while (!alt_up_av_config_read_ready(av_config))
+    {
+    }
+    printf("Configuration read ready!\n");
+
+    alt_up_audio_dev *audio = alt_up_audio_open_dev("/dev/audio_0");
+
+    if (audio != NULL)
+        printf("Audio dev is opened (not null)\n");
+    else
+    {
+        printf("Audio is null \n");
+        return;
+    }
+
+    short int fileHandle = alt_up_sd_card_fopen(audioFile, false);
+
+    if (fileHandle >= 0)
+        printf("File is opened\n");
+    else
+    {
+        printf("File failed\n");
+        return;
+    }
+
+    // Rest of the code for reading and playing audio data goes here...
+
+    // Close the SD card
+    alt_up_sd_card_fclose(fileHandle);
+}
