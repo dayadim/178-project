@@ -1,0 +1,18 @@
+16:17:54 **** Incremental Build of configuration Nios II for project testing ****
+make all 
+Info: Building ../bsp_testing/
+C:/intelFPGA_lite/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../bsp_testing/
+[BSP build complete]
+Info: Compiling hello_world.c to obj/default/hello_world.o
+nios2-elf-gcc -xc -MP -MMD -c -I../bsp_testing//HAL/inc -I../bsp_testing/ -I../bsp_testing//drivers/inc  -pipe -D__hal__ -DALT_NO_INSTRUCTION_EMULATION -DALT_SINGLE_THREADED    -O0 -g -Wall   -mhw-div -mhw-mul -mhw-mulx -mgpopt=global  -o obj/default/hello_world.o hello_world.c
+Info: Linking testing.elf
+nios2-elf-g++  -T'../bsp_testing//linker.x' -msys-crt0='../bsp_testing//obj/HAL/src/crt0.o' -msys-lib=hal_bsp -L../bsp_testing/   -Wl,-Map=testing.map   -O0 -g -Wall   -mhw-div -mhw-mul -mhw-mulx -mgpopt=global  -o testing.elf obj/default/hello_world.o -lm -msys-lib=m
+nios2-elf-insert testing.elf --thread_model hal --cpu_name Nios2 --qsys true --simulation_enabled false --stderr_dev JTAG_UART --stdin_dev JTAG_UART --stdout_dev JTAG_UART --sopc_system_name projectSystemQsys --quartus_project_dir "C:/eclipseFiles/178project/178-project/quartus_files" --jdi ../..//output_files/project_system.jdi --sopcinfo C:/eclipseFiles/178project/178-project/quartus_files/software/bsp_testing/../../projectSystemQsys.sopcinfo
+Info: (testing.elf) 89 KBytes program size (code + initialized data).
+Info:               130975 KBytes free for stack + heap.
+Info: Creating testing.objdump
+nios2-elf-objdump --disassemble --syms --all-header --source testing.elf >testing.objdump
+[testing build complete]
+
+16:17:56 Build Finished (took 1s.555ms)
+
