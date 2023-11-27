@@ -1,0 +1,25 @@
+15:38:16 **** Incremental Build of configuration Nios II for project stock-computer-system ****
+make all 
+Info: Building ../stock-computer-system_bsp/
+C:/intelFPGA_lite/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../stock-computer-system_bsp/
+[BSP build complete]
+Info: Compiling hello_world.c to obj/default/hello_world.o
+nios2-elf-gcc -xc -MP -MMD -c -I../stock-computer-system_bsp//HAL/inc -I../stock-computer-system_bsp/ -I../stock-computer-system_bsp//drivers/inc  -pipe -D__hal__ -DALT_NO_INSTRUCTION_EMULATION -DALT_SINGLE_THREADED    -O0 -g -Wall   -mhw-div -mcustom-fpu-cfg=60-2 -mhw-mul -mhw-mulx -mgpopt=global  -o obj/default/hello_world.o hello_world.c
+hello_world.c: In function 'main':
+hello_world.c:17:14: warning: 'x' is used uninitialized in this function [-Wuninitialized]
+  instruction = x;
+              ^
+hello_world.c:18:5: warning: 'y' is used uninitialized in this function [-Wuninitialized]
+  if (y != 0)
+     ^
+Info: Linking stock-computer-system.elf
+nios2-elf-g++  -T'../stock-computer-system_bsp//linker.x' -msys-crt0='../stock-computer-system_bsp//obj/HAL/src/crt0.o' -msys-lib=hal_bsp -L../stock-computer-system_bsp/  -mcustom-fpu-cfg=60-2  -Wl,-Map=stock-computer-system.map   -O0 -g -Wall   -mhw-div -mcustom-fpu-cfg=60-2 -mhw-mul -mhw-mulx -mgpopt=global  -o stock-computer-system.elf obj/default/hello_world.o -lm -msys-lib=m
+nios2-elf-insert stock-computer-system.elf --thread_model hal --cpu_name Nios2 --qsys true --simulation_enabled false --id 0 --sidp 0xff202040 --timestamp 1482344682 --stderr_dev JTAG_UART --stdin_dev JTAG_UART --stdout_dev JTAG_UART --sopc_system_name Computer_System --quartus_project_dir "C:/intelFPGA_lite/16.1/University_Program/Computer_Systems/DE2-115/DE2-115_Computer/verilog" --jdi C:/intelFPGA_lite/16.1/University_Program/Computer_Systems/DE2-115/DE2-115_Computer/verilog/software/stock-computer-system_bsp/../../DE2_115_Computer.jdi --sopcinfo C:/intelFPGA_lite/16.1/University_Program/Computer_Systems/DE2-115/DE2-115_Computer/verilog/software/stock-computer-system_bsp/../../Computer_System.sopcinfo
+Info: (stock-computer-system.elf) 22 KBytes program size (code + initialized data).
+Info:                             65507 KBytes free for stack + heap.
+Info: Creating stock-computer-system.objdump
+nios2-elf-objdump --disassemble --syms --all-header --source stock-computer-system.elf >stock-computer-system.objdump
+[stock-computer-system build complete]
+
+15:38:17 Build Finished (took 1s.351ms)
+

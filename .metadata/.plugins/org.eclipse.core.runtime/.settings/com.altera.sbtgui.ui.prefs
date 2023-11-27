@@ -1,0 +1,5 @@
+eclipse.preferences.version=1
+newApplicationWizardPage.defaultLocation=C\:\\intelFPGA_lite\\16.1\\University_Program\\Computer_Systems\\DE2-115\\DE2-115_Computer\\verilog\\software\\board_diag
+newSoftwareExampleWizardPage.defaultLocation=C\:\\eclipseFiles\\178project\\178-project\\quartus_files\\software\\testing
+newSoftwareExampleWizardPage.sopcinfoFile=C\:\\eclipseFiles\\178project\\178-project\\quartus_files\\projectSystemQsys.sopcinfo
+newSoftwareExampleWizardPage2.newBspLocation=C\:\\eclipseFiles\\178project\\178-project\\quartus_files\\software\\bsp_testing
