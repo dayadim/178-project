@@ -224,6 +224,12 @@ projectSystemQsys The_System (
 
 	// Expansion JP5
 	.expansion_jp5_export					({GPIO[35:19], GPIO[17], GPIO[15:3], GPIO[1]}),  
+	
+	// i2c - new
+	.i2c_sda_in(GPIO[10]),
+	.i2c_scl_in(GPIO[11]),
+	.i2c_sda_oe(GPIO[10]),
+	.i2c_scl_oe(GPIO[11]),
 
 	// Green LEDs
 	.green_leds_export						(LEDG),
